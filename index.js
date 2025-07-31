@@ -62,6 +62,21 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
+// מסלול לקבלת פרטי משתמש לפי טוקן (חדש)
+app.get('/api/auth/user', auth, async (req, res) => {
+    try {
+        // ה-middleware שלנו (auth) כבר קישר את המשתמש ל-req.user
+        const user = await User.findById(req.user.id).select('-password'); // מחזיר את המשתמש ללא הסיסמה
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json({ username: user.username }); // מחזיר רק את שם המשתמש
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
+    }
+});
+
 // --- מסלולים עבור הבקבוקים (עם הגנה) ---
 // הוספת בקבוק חדש (דורש אימות)
 app.post('/api/spirits', auth, async (req, res) => {

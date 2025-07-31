@@ -20,8 +20,8 @@ mongoose.connect('mongodb://localhost:27017/my_spirits_db', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('Could not connect to MongoDB:', err));
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('Could not connect to MongoDB:', err));
 
 // --- מסלולי אימות ---
 // מסלול הרשמה
@@ -44,7 +44,7 @@ app.post('/api/auth/login', async (req, res) => {
         if (!user) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
-        
+
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid credentials' });
@@ -56,7 +56,7 @@ app.post('/api/auth/login', async (req, res) => {
             { expiresIn: '1h' }
         );
 
-        res.json({ message: 'Logged in successfully!', token });
+        res.json({ message: 'Logged in successfully!', token, user: { username: user.username } }); // השינוי כאן
     } catch (err) {
         res.status(500).json({ message: 'Server error', error: err.message });
     }
@@ -67,12 +67,12 @@ app.post('/api/auth/login', async (req, res) => {
 app.post('/api/spirits', auth, async (req, res) => {
     try {
         const { name, type, producer, country, alcohol_percentage, volume_ml, quantity, image_url, status, notes, purchase_date, purchase_price, specifics } = req.body;
-        
+
         const spirit = new Spirit({
             name, type, producer, country, alcohol_percentage, volume_ml, quantity, image_url, status, notes, purchase_date, purchase_price, specifics,
             user: req.user.id // לקיחת ה-ID של המשתמש מה-middleware
         });
-        
+
         const newSpirit = await spirit.save();
         res.status(201).json(newSpirit);
     } catch (err) {

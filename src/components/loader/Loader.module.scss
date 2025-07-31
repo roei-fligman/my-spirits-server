@@ -1,0 +1,34 @@
+.loaderContainer {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .loader {
+        $size: 33px;
+        width: $size;
+        height: $size;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+}
+
+.progressLine {
+    height: 8px;
+    display: flex;
+    background: #F7D5FE;
+
+    .progress {
+        background: #F0ABFC;
+    }
+}
